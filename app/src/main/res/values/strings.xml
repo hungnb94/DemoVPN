@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">DemoVPN</string>
+    <string name="notification_title">Easy VPN Free - %s</string>
+    <string name="unknown_state">Unknown state</string>
+</resources>
