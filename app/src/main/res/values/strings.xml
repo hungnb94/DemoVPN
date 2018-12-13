@@ -1,5 +1,10 @@
 <resources>
     <string name="app_name">DemoVPN</string>
-    <string name="notification_title">Easy VPN Free - %s</string>
+    <string name="notification_title">Solar VPN Free - %s</string>
     <string name="unknown_state">Unknown state</string>
+    <string name="traffic_in">Downloaded: %s</string>
+    <string name="traffic_out">Uploaded: %s</string>
+    <string name="download_speed">Upload speed: ↓%s/s</string>
+    <string name="upload_speed">Upload speed: ↑%s/s</string>
+    <string name="connect_time">Connection time: %s</string>
 </resources>

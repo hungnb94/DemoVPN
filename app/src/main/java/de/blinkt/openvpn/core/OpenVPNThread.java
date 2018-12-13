@@ -8,7 +8,6 @@ package de.blinkt.openvpn.core;
 import android.annotation.SuppressLint;
 import android.util.Log;
 
-
 import com.solar.hungnb.demovpn.R;
 
 import java.io.BufferedReader;
@@ -26,7 +25,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import de.blinkt.openvpn.core.VpnStatus.ConnectionStatus;
-import me.logg.Logg;
 
 public class OpenVPNThread implements Runnable {
     private static final String DUMP_PATH_STRING = "Dump path: ";
@@ -45,6 +43,7 @@ public class OpenVPNThread implements Runnable {
     private String mDumpPath;
     private boolean mBrokenPie = false;
     private boolean mNoProcessExitStatus = false;
+    private static boolean isVpnRunning = false;
 
     public OpenVPNThread(OpenVPNService service, String[] argv, String nativelibdir) {
         mArgv = argv;
@@ -66,8 +65,10 @@ public class OpenVPNThread implements Runnable {
         if(mArgv == null) Log.e("ARGV", "argv null");
         try {
             Log.i(TAG, "Starting openvpn");
+            isVpnRunning = true;
             startOpenVPNThreadArgs(mArgv);
             Log.i(TAG, "OpenVPN process exited");
+            isVpnRunning = false;
         } catch (Exception e) {
             VpnStatus.logException("Starting OpenVPN Thread", e);
             Log.e(TAG, "OpenVPNThread Got " + e.toString());
@@ -187,6 +188,7 @@ public class OpenVPNThread implements Runnable {
 
         } catch (IOException e) {
             VpnStatus.logException("Error reading from output of OpenVPN process", e);
+            Log.e(TAG, "Error reading from output of OpenVPN process");
             stopProcess();
         }
 

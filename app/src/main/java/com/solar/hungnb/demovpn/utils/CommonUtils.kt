@@ -1,111 +1,72 @@
-package com.solar.hungnb.demovpn;
+package com.solar.hungnb.demovpn.utils
 
-import android.app.Activity;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
-import android.net.VpnService;
-import android.os.Bundle;
-import android.os.IBinder;
-import android.util.Log;
-import android.view.View;
-import android.widget.Toast;
+import android.app.ActivityManager
+import android.content.Context
+import android.os.Build
+import android.widget.Toast
+import com.solar.hungnb.demovpn.R
+import de.blinkt.openvpn.core.ConfigParser
+import de.blinkt.openvpn.core.ProfileManager
+import de.blinkt.openvpn.core.VPNLaunchHelper
+import java.io.IOException
+import java.io.StringReader
 
-import java.io.IOException;
-import java.io.StringReader;
 
-import de.blinkt.openvpn.VpnProfile;
-import de.blinkt.openvpn.core.ConfigParser;
-import de.blinkt.openvpn.core.OpenVPNService;
-import de.blinkt.openvpn.core.ProfileManager;
-import de.blinkt.openvpn.core.VPNLaunchHelper;
-
-public class MainActivity extends Activity {
-    private final String TAG = MainActivity.class.getSimpleName();
-    private static OpenVPNService mService;
-    private boolean isBindService = false;
-
-    private final int RC_START_VPN = 10;
-
-    ServiceConnection connection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder binder) {
-            if (binder instanceof OpenVPNService.LocalBinder) {
-                mService = ((OpenVPNService.LocalBinder) binder).getService();
+object CommonUtils {
+    @JvmStatic
+    fun isMyServiceRunning(context: Context, serviceClass: Class<*>): Boolean {
+        val manager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        for (service in manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.name == service.service.className) {
+                return true
             }
         }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            mService = null;
-        }
-    };
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        return false
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        Intent intent = new Intent(this, OpenVPNService.class);
-        intent.setAction(OpenVPNService.START_SERVICE);
-        isBindService = bindService(intent, connection, Context.BIND_AUTO_CREATE);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (isBindService) {
-            isBindService = false;
-            unbindService(connection);
-        }
-    }
-
-    private void preprapeVpn() {
-        Intent intent = VpnService.prepare(this);
-        if (intent != null) {
-            startActivityForResult(intent, RC_START_VPN);
+    @JvmStatic
+    fun isRecentActivity(className: String): Boolean {
+        val RECENT_ACTIVITY: String
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+            RECENT_ACTIVITY = "com.android.systemui.recents.RecentsActivity"
+        } else if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            RECENT_ACTIVITY = "com.android.systemui.recent.RecentsActivity"
         } else {
-            startVpn();
+            RECENT_ACTIVITY = "com.android.internal.policy.impl.RecentApplicationDialog";
         }
+        if (RECENT_ACTIVITY.equals(className, true)) {
+            return true
+        }
+
+        return false
     }
 
-    private void startVpn() {
-        ConfigParser cp = new ConfigParser();
+    @JvmStatic
+    fun startDefaultVpn(context: Context){
+        val cp = ConfigParser()
         try {
-            cp.parseConfig(new StringReader(getConfig()));
-            VpnProfile profile = cp.convertProfile();
-            int needPW = profile.needUserPWInput(false);
-            if (needPW != 0) {
-                Log.e(TAG, "Need password, so set it");
-                profile.mUsername = "openvpn";
-                profile.mPassword = "9V9m6lMbVDwN";
+            cp.parseConfig(StringReader(getConfig()))
+            val profile = cp.convertProfile()
+            val needPW = profile.needUserPWInput(false)
+            if (needPW == R.string.password) {
+                profile.mUsername = "openvpn"
+                profile.mPassword = "9V9m6lMbVDwN"
             }
-            int checkProfile = profile.checkProfile(this);
+            val checkProfile = profile.checkProfile(context)
             if (checkProfile != R.string.no_error_found) {
-                Toast.makeText(this, checkProfile, Toast.LENGTH_SHORT).show();
-                return;
+                Toast.makeText(context, checkProfile, Toast.LENGTH_SHORT).show()
+                return
             }
-            ProfileManager.setTemporaryProfile(profile);
-            VPNLaunchHelper.startOpenVpn(profile, getBaseContext());
-        } catch (IOException | ConfigParser.ConfigParseError e) {
-            e.printStackTrace();
+            ProfileManager.setTemporaryProfile(profile)
+            VPNLaunchHelper.startOpenVpn(profile, context.applicationContext)
+        } catch (e: IOException) {
+            e.printStackTrace()
+        } catch (e: ConfigParser.ConfigParseError) {
+            e.printStackTrace()
         }
     }
 
-    private void stopVpn() {
-        ProfileManager.setConntectedVpnProfileDisconnected(this);
-        if (mService != null && mService.getManagement() != null) {
-            mService.getManagement().stopVPN(false);
-        }
-    }
-
-    String getConfig() {
+    private fun getConfig(): String {
         return "# Automatically generated OpenVPN client config file\n" +
                 "# Generated on Mon Dec 10 01:17:06 2018 by SolarVPN1\n" +
                 "\n" +
@@ -313,29 +274,6 @@ public class MainActivity extends Activity {
                 "## K+zO+csDCx2DeYQnEHSJFgV5D6DyBqZqjFAuMukYLdG8ny/i0Oz/tRX4RnmEzm4v\n" +
                 "## KwBz5haWDRNpHzT0ZUwmJhTUNn0gwMFytESBZDbP+1I1XZTja8NQngkpzVz09hBX\n" +
                 "## EAZZ5h4a1fg=\n" +
-                "## -----END CERTIFICATE-----\n";
-    }
-
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == RC_START_VPN) {
-            if (resultCode == RESULT_OK) {
-                startVpn();
-            } else {
-                Toast.makeText(this, "Can not open vpn", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-    public void click(View view) {
-        switch (view.getId()) {
-            case R.id.btnStartVpn:
-                preprapeVpn();
-                break;
-            case R.id.btnStopVpn:
-                stopVpn();
-                break;
-            default:
-                break;
-        }
+                "## -----END CERTIFICATE-----\n"
     }
 }

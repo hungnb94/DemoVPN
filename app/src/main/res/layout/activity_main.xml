@@ -4,7 +4,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:padding="10dp"
+    tools:context=".activity.MainActivity">
+
+    <TextView
+        android:id="@+id/tvTimeConnect"
+        android:text="00:00"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/tvStatus"
+        android:text="Status"
+        android:layout_width="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/tvTimeConnect"
+        android:layout_height="wrap_content" />
 
     <Button
         android:id="@+id/btnStartVpn"
@@ -26,5 +40,15 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/btnStartVpn" />
+
+    <Button
+        android:id="@+id/btnSelectApp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="click"
+        android:text="Select app"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnStopVpn" />
 
 </android.support.constraint.ConstraintLayout>

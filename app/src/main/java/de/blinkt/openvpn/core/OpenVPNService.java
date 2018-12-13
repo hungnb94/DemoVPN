@@ -35,7 +35,8 @@ import android.widget.Toast;
 
 
 import com.solar.hungnb.demovpn.R;
-import com.solar.hungnb.demovpn.ServerActivity;
+import com.solar.hungnb.demovpn.activity.ServerActivity;
+import com.solar.hungnb.demovpn.utils.Constants;
 
 
 import java.io.IOException;
@@ -45,7 +46,6 @@ import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Collection;
-import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
 
@@ -81,7 +81,7 @@ public class OpenVPNService extends VpnService implements StateListener, Callbac
     private DeviceStateReceiver mDeviceStateReceiver;
     private boolean mDisplayBytecount = false;
     private boolean mStarting = false;
-    private long mConnecttime;
+    public static long mConnecttime;
     private boolean mOvpn3 = false;
     private OpenVPNManagement mManagement;
     private String mLastTunCfg;
@@ -147,6 +147,7 @@ public class OpenVPNService extends VpnService implements StateListener, Callbac
     }
 
     private void showNotification(final String msg, String tickerText, boolean lowpriority, long when, ConnectionStatus status) {
+        Log.i("NotificationMsg", msg);
         String ns = Context.NOTIFICATION_SERVICE;
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(ns);
 
@@ -997,18 +998,15 @@ public class OpenVPNService extends VpnService implements StateListener, Callbac
 
     }
 
-    private void calcTraffic(OpenVPNService openVPNService, long in, long out, long diffIn, long diffOut) {
-        //TODO: UPDATE
-//        List<String> totalTraffic = getTotalTraffic(diffIn, diffOut);
-//
-//        Intent traffic = new Intent();
-//        traffic.setAction(TRAFFIC_ACTION);
-//        traffic.putExtra(DOWNLOAD_ALL, totalTraffic.get(0));
-//        traffic.putExtra(DOWNLOAD_SESSION, OpenVPNService.humanReadableByteCount(in, false));
-//        traffic.putExtra(UPLOAD_ALL, totalTraffic.get(1));
-//        traffic.putExtra(UPLOAD_SESSION, OpenVPNService.humanReadableByteCount(out, false));
-//
-//        context.sendBroadcast(traffic);
+    private void calcTraffic(Context context, long in, long out, long diffIn, long diffOut) {
+        Intent traffic = new Intent();
+        traffic.setAction(Constants.TRAFFIC_ACTION);
+        traffic.putExtra(Constants.DOWNLOAD_SESSION, OpenVPNService.humanReadableByteCount(in, false));
+        traffic.putExtra(Constants.DOWNLOAD_SPEED, humanReadableByteCount(diffIn / OpenVPNManagement.mBytecountInterval, true));
+        traffic.putExtra(Constants.UPLOAD_SESSION, OpenVPNService.humanReadableByteCount(out, false));
+        traffic.putExtra(Constants.UPLOAD_SPEED, humanReadableByteCount(diffOut / OpenVPNManagement.mBytecountInterval, true));
+
+        context.sendBroadcast(traffic);
     }
 
     @Override
