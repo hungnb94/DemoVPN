@@ -68,8 +68,8 @@ public class MainActivity extends Activity implements VpnStatus.ByteCountListene
                     public void run() {
                         long timeConnectMillis = System.currentTimeMillis() - connectionTime;
                         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+                        sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
                         Calendar calConnectTime = new GregorianCalendar();
-                        calConnectTime.setTimeZone(TimeZone.getTimeZone("GMT"));
                         calConnectTime.setTimeInMillis(timeConnectMillis);
                         String timeConnect = String.format(getString(R.string.connect_time),
                                 sdf.format(calConnectTime.getTime()));

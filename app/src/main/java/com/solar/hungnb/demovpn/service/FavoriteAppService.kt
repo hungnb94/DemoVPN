@@ -44,11 +44,11 @@ class FavoriteAppService : Service() {
 
     class MyTask(val context: Context) : TimerTask() {
         private val TAG = "MyTask"
-        val database = lazy { MyDatabase() }
+        val database = lazy { MyDatabase.getInstance(context) }
         override fun run() {
             if (!VpnStatus.isVPNActive()) {
-                for (favoriteAppPackage in database.value.getFavoriteApps()) {
-                    if (getForegroundPackage() == favoriteAppPackage) {
+                for (favoriteAppPackage in database.value.favoriteAppDao().getAll()) {
+                    if (getForegroundPackage() == favoriteAppPackage.packageName) {
                         CommonUtils.startDefaultVpn(context)
                     }
                 }
@@ -56,7 +56,7 @@ class FavoriteAppService : Service() {
         }
 
         private fun getForegroundPackage(): String {
-            var topPackageName = ""
+            var topPackageName: String
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
                 val mUsageStatsManager = context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager

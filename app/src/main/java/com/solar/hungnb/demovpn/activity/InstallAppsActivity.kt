@@ -5,8 +5,6 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.solar.hungnb.demovpn.R
-import com.solar.hungnb.demovpn.adapter.InstallAppAdapter
-import kotlinx.android.synthetic.main.activity_install_apps.*
 
 
 class InstallAppsActivity : AppCompatActivity() {
@@ -18,7 +16,7 @@ class InstallAppsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_install_apps)
 
         getAllApp()
-        rvInstallApp.adapter = InstallAppAdapter(installApps)
+//        rvInstallApp.adapter = InstallAppAdapter(installApps)
     }
 
     private fun getAllApp() {

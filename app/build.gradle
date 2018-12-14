@@ -1,9 +1,11 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 28
+    buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "com.solar.hungnb.demovpn"
         minSdkVersion 21
@@ -11,6 +13,18 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        // used by Room, to test migrations
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ["room.schemaLocation":
+                                     "$projectDir/schemas".toString()]
+            }
+        }
+        // used by Room, to test migrations
+        sourceSets {
+            androidTest.assets.srcDirs +=
+                    files("$projectDir/schemas".toString())
+        }
     }
     buildTypes {
         release {
@@ -18,6 +32,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+//    packagingOptions {
+//        exclude 'META-INF/androidx.versionedparcelable_versionedparcelable.version'
+//        exclude 'META-INF/proguard/androidx-annotations.pro'
+//        exclude 'META-INF/androidx.core_core.version'
+//    }
 }
 
 dependencies {
@@ -31,15 +50,7 @@ dependencies {
     api 'me.tool:Logg:1.6.0'
     implementation 'com.android.support:recyclerview-v7:28.0.0'
 
-    def room_version = "2.1.0-alpha03"
-    implementation "androidx.room:room-runtime:$room_version"
-    annotationProcessor "androidx.room:room-compiler:$room_version" // use kapt for Kotlin
-
-    // optional - RxJava support for Room
-//    implementation "androidx.room:room-rxjava2:$room_version"
-
-
-    // optional - Coroutines support for Room
-//    implementation "androidx.room:room-coroutines:$room_version"
+    implementation "android.arch.persistence.room:runtime:1.1.1"
+    kapt "android.arch.persistence.room:compiler:1.1.1"
 
 }
