@@ -7,4 +7,5 @@
     <string name="download_speed">Upload speed: ↓%s/s</string>
     <string name="upload_speed">Upload speed: ↑%s/s</string>
     <string name="connect_time">Connection time: %s</string>
+    <string name="request_usage_permisson">Please accept %s have permission to doing this action</string>
 </resources>

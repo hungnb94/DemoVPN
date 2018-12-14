@@ -1,8 +1,14 @@
 package com.solar.hungnb.demovpn.activity
 
+import android.app.AlertDialog
+import android.app.AppOpsManager
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import android.provider.Settings
 import android.support.v7.app.AppCompatActivity
 import android.view.View
+import android.widget.Toast
 import com.solar.hungnb.demovpn.R
 import com.solar.hungnb.demovpn.adapter.InstallAppAdapter
 import com.solar.hungnb.demovpn.model.AppInfoWrapper
@@ -16,6 +22,8 @@ import java.util.*
 
 class InstallAppsActivity : AppCompatActivity() {
     private val TAG = "InstallAppsActivity"
+    private val RC_USAGE_PERMISSION = 11
+
     private val listApp = ArrayList<AppInfoWrapper>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,7 +59,7 @@ class InstallAppsActivity : AppCompatActivity() {
 
     private fun addEvent() {
         btnSelectAll.setOnClickListener { selectAllApp() }
-        btnSaveFavoriteApps.setOnClickListener { saveFavoriteApps() }
+        btnSaveFavoriteApps.setOnClickListener { checkAndSaveApps() }
     }
 
     private fun selectAllApp() {
@@ -59,6 +67,36 @@ class InstallAppsActivity : AppCompatActivity() {
         if (adapter is InstallAppAdapter) {
             adapter.setCheckAll()
         }
+    }
+
+    private fun checkAndSaveApps() {
+        if (isUsageAccessGranted()) {
+            saveFavoriteApps()
+        } else {
+            requestUsagePermission()
+        }
+    }
+
+    private fun requestUsagePermission(){
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Need permission")
+                .setMessage(String.format(getString(R.string.request_usage_permisson), getString(R.string.app_name)))
+                .setPositiveButton("OK") { dialog, which ->
+                    val intent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)
+                    startActivityForResult(intent, RC_USAGE_PERMISSION)
+
+                    dialog.dismiss()
+                }
+                .setNegativeButton("Cancel") { dialog, which -> dialog.dismiss() }
+                .setCancelable(false)
+        builder.show()
+    }
+
+    private fun isUsageAccessGranted(): Boolean {
+        val appOps = getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
+        val mode = appOps.checkOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS,
+                android.os.Process.myUid(), packageName)
+        return mode == AppOpsManager.MODE_ALLOWED
     }
 
     private fun saveFavoriteApps() {
@@ -85,5 +123,16 @@ class InstallAppsActivity : AppCompatActivity() {
         }
 
         finish()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == RC_USAGE_PERMISSION) {
+            if (isUsageAccessGranted()) {
+                val intent = Intent(this, InstallAppsActivity::class.java)
+                startActivity(intent)
+            } else {
+                Toast.makeText(this, "Can not doing this action without permission", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 }

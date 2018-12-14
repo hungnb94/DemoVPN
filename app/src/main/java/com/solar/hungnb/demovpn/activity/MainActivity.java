@@ -1,18 +1,15 @@
 package com.solar.hungnb.demovpn.activity;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.AppOpsManager;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.net.VpnService;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.SystemClock;
-import android.provider.Settings;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,7 +31,6 @@ import de.blinkt.openvpn.core.VpnStatus;
 public class MainActivity extends Activity implements VpnStatus.ByteCountListener, VpnStatus.StateListener {
     private final String TAG = MainActivity.class.getSimpleName();
     private final int RC_START_VPN = 10;
-    private final int RC_USAGE_PERMISSION = 11;
 
     private static OpenVPNService mService;
     private boolean isBindService = false;
@@ -152,13 +148,6 @@ public class MainActivity extends Activity implements VpnStatus.ByteCountListene
             } else {
                 Toast.makeText(this, "Can not open vpn", Toast.LENGTH_SHORT).show();
             }
-        } else if(requestCode == RC_USAGE_PERMISSION){
-            if(isUsageAccessGranted()){
-                Intent intent = new Intent(this, InstallAppsActivity.class);
-                startActivity(intent);
-            } else {
-                Toast.makeText(this, "Can not doing this action without permission", Toast.LENGTH_SHORT).show();
-            }
         }
     }
 
@@ -181,38 +170,8 @@ public class MainActivity extends Activity implements VpnStatus.ByteCountListene
     }
 
     private void selectApp() {
-        if (isUsageAccessGranted()) {
-            Intent intent = new Intent(this, InstallAppsActivity.class);
-            startActivity(intent);
-        } else {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("")
-                    .setMessage("")
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
-                            startActivityForResult(intent, RC_USAGE_PERMISSION);
-
-                            dialog.dismiss();
-                        }
-                    })
-                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    })
-                    .setCancelable(false);
-            builder.show();
-        }
-    }
-
-    private boolean isUsageAccessGranted() {
-        AppOpsManager appOps = (AppOpsManager) getSystemService(Context.APP_OPS_SERVICE);
-        int mode = appOps.checkOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS,
-                android.os.Process.myUid(), getPackageName());
-        return mode == AppOpsManager.MODE_ALLOWED;
+        Intent intent = new Intent(this, InstallAppsActivity.class);
+        startActivity(intent);
     }
 
     @Override
