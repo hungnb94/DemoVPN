@@ -17,8 +17,12 @@ class LoadFavoriteAppTask(context: Context, private val listener: OnLoadAppListe
         this.reff = WeakReference(context)
     }
 
+    override fun onPreExecute() {
+        listener.onStart()
+    }
+
     override fun doInBackground(vararg params: Void?): List<AppInfoWrapper> {
-        return if(reff?.get() != null) {
+        return if (reff?.get() != null) {
             val context = reff?.get()!!
 
             //Get all app on device
@@ -43,7 +47,8 @@ class LoadFavoriteAppTask(context: Context, private val listener: OnLoadAppListe
         val packages = pm.getInstalledApplications(PackageManager.GET_META_DATA)
         val installApps = ArrayList<ApplicationInfo>()
         installApps.addAll(packages.filter { applicationInfo ->
-            (!isSystemApp(applicationInfo) && isAppUsingInternet(applicationInfo, pm)) })
+            (!isSystemApp(applicationInfo) && isAppUsingInternet(applicationInfo, pm))
+        })
 
         return installApps
     }

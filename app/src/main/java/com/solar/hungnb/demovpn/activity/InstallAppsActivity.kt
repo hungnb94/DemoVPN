@@ -128,8 +128,7 @@ class InstallAppsActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == RC_USAGE_PERMISSION) {
             if (isUsageAccessGranted()) {
-                val intent = Intent(this, InstallAppsActivity::class.java)
-                startActivity(intent)
+                saveFavoriteApps()
             } else {
                 Toast.makeText(this, "Can not doing this action without permission", Toast.LENGTH_SHORT).show()
             }
