@@ -30,7 +30,7 @@ class InstallAppAdapter(
         }
 
         //Handle selected change
-        holder.checkBox.setOnCheckedChangeListener { checkBox, isChecked ->
+        holder.checkBox.setOnCheckedChangeListener { _, isChecked ->
                 appInfo.isFavorite = isChecked
                 listener?.onItemCheckChange(position, isChecked)
         }
