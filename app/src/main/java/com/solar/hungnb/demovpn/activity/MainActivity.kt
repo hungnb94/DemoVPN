@@ -155,12 +155,12 @@ class MainActivity : Activity(), VpnStatus.ByteCountListener, VpnStatus.StateLis
         startActivity(intent)
     }
 
-    override fun updateByteCount(`in`: Long, out: Long, diffIn: Long, diffOut: Long) {
+    override fun updateByteCount(inp: Long, out: Long, diffIn: Long, diffOut: Long) {
         if (firstData) {
             firstData = false
         } else if (connectionTime > 0) {
             val downloadSession = String.format(getString(R.string.traffic_in),
-                    OpenVPNService.humanReadableByteCount(`in`, false))
+                    OpenVPNService.humanReadableByteCount(inp, false))
             val uploadSession = String.format(getString(R.string.traffic_out),
                     OpenVPNService.humanReadableByteCount(out, false))
             val downloadSpeed = String.format(getString(R.string.download_speed),
