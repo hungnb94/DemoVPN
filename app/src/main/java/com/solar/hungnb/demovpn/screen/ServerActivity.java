@@ -1,4 +1,4 @@
-package com.solar.hungnb.demovpn.activity;
+package com.solar.hungnb.demovpn.screen;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;

@@ -35,7 +35,7 @@ import android.widget.Toast;
 
 
 import com.solar.hungnb.demovpn.R;
-import com.solar.hungnb.demovpn.activity.ServerActivity;
+import com.solar.hungnb.demovpn.screen.ServerActivity;
 import com.solar.hungnb.demovpn.utils.Constants;
 
 

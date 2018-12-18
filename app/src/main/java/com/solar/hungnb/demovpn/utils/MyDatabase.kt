@@ -4,8 +4,8 @@ import android.arch.persistence.room.Database
 import android.arch.persistence.room.Room
 import android.arch.persistence.room.RoomDatabase
 import android.content.Context
-import com.solar.hungnb.demovpn.model.AppDao
-import com.solar.hungnb.demovpn.model.FavoriteApp
+import com.solar.hungnb.demovpn.db.AppDao
+import com.solar.hungnb.demovpn.db.FavoriteApp
 
 
 

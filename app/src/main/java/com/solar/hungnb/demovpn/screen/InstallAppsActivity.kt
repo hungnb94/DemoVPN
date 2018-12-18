@@ -1,4 +1,4 @@
-package com.solar.hungnb.demovpn.activity
+package com.solar.hungnb.demovpn.screen
 
 import android.app.AlertDialog
 import android.app.AppOpsManager
@@ -11,8 +11,8 @@ import android.view.View
 import android.widget.Toast
 import com.solar.hungnb.demovpn.R
 import com.solar.hungnb.demovpn.adapter.InstallAppAdapter
+import com.solar.hungnb.demovpn.db.FavoriteApp
 import com.solar.hungnb.demovpn.model.AppInfoWrapper
-import com.solar.hungnb.demovpn.model.FavoriteApp
 import com.solar.hungnb.demovpn.task.LoadFavoriteAppTask
 import com.solar.hungnb.demovpn.task.SimpleTask
 import com.solar.hungnb.demovpn.utils.MyDatabase
@@ -81,13 +81,13 @@ class InstallAppsActivity : AppCompatActivity() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Need permission")
                 .setMessage(String.format(getString(R.string.request_usage_permisson), getString(R.string.app_name)))
-                .setPositiveButton("OK") { dialog, which ->
+                .setPositiveButton("OK") { dialog, _ ->
                     val intent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)
                     startActivityForResult(intent, RC_USAGE_PERMISSION)
 
                     dialog.dismiss()
                 }
-                .setNegativeButton("Cancel") { dialog, which -> dialog.dismiss() }
+                .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
                 .setCancelable(false)
         builder.show()
     }

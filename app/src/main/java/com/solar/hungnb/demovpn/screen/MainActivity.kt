@@ -1,4 +1,4 @@
-package com.solar.hungnb.demovpn.activity
+package com.solar.hungnb.demovpn.screen
 
 import android.app.Activity
 import android.content.ComponentName
@@ -9,6 +9,7 @@ import android.net.VpnService
 import android.os.Bundle
 import android.os.IBinder
 import android.os.SystemClock
+import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.Toast
 import com.solar.hungnb.demovpn.R
@@ -22,17 +23,18 @@ import kotlinx.android.synthetic.main.activity_main.*
 import java.text.SimpleDateFormat
 import java.util.*
 
-class MainActivity : Activity(), VpnStatus.ByteCountListener, VpnStatus.StateListener {
+class MainActivity : AppCompatActivity(), VpnStatus.ByteCountListener, VpnStatus.StateListener {
     private val TAG = MainActivity::class.java.simpleName
 
     private val RC_START_VPN = 10
+
     private var isBindService = false
     private var firstData = false
     private var connectionTime: Long = 0
 
 
-    internal var serviceConnection: ServiceConnection = object : ServiceConnection {
-        override fun onServiceConnected(name: ComponentName, binder: IBinder) {
+    private var serviceConnection: ServiceConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName, binder: IBinder?) {
             if (binder is OpenVPNService.LocalBinder) {
                 mService = binder.service
             }
@@ -43,7 +45,7 @@ class MainActivity : Activity(), VpnStatus.ByteCountListener, VpnStatus.StateLis
         }
     }
 
-    internal var threadUpdateConnectionTime: Thread = object : Thread() {
+    private var threadUpdateConnectionTime: Thread = object : Thread() {
         override fun run() {
             while (VpnStatus.isVPNActive()) {
                 runOnUiThread {
@@ -118,7 +120,7 @@ class MainActivity : Activity(), VpnStatus.ByteCountListener, VpnStatus.StateLis
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == RC_START_VPN) {
             if (resultCode == Activity.RESULT_OK) {
                 startVpn()
@@ -140,6 +142,7 @@ class MainActivity : Activity(), VpnStatus.ByteCountListener, VpnStatus.StateLis
             }
             R.id.btnSelectApp -> selectApp()
             R.id.btnTestNetworkSpeed -> openNetworkTestActivity()
+            R.id.btnNetworkInfo -> openNetworkInfoActivity()
             else -> {
             }
         }
@@ -148,6 +151,13 @@ class MainActivity : Activity(), VpnStatus.ByteCountListener, VpnStatus.StateLis
     private fun openNetworkTestActivity() {
         val intent = Intent(this, NetworkSpeedTestingActivity::class.java)
         startActivity(intent)
+    }
+
+    private fun openNetworkInfoActivity() {
+        supportFragmentManager.beginTransaction()
+                .replace(android.R.id.content, NetworkInfoFragment())
+                .addToBackStack(NetworkInfoFragment::class.java.simpleName)
+                .commit()
     }
 
     private fun selectApp() {

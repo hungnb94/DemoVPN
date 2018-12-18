@@ -1,7 +1,8 @@
-package com.solar.hungnb.demovpn.activity
+package com.solar.hungnb.demovpn.screen
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import com.qiniu.android.netdiag.Ping
 import com.solar.hungnb.demovpn.R
 import com.solar.hungnb.demovpn.task.SimpleTask
 import com.solar.hungnb.demovpn.utils.LogUtils
@@ -16,6 +17,7 @@ class NetworkSpeedTestingActivity : AppCompatActivity() {
         setContentView(R.layout.activity_network_speed_testing)
 
         testSpeed("https://www.google.com.vn")
+        ping()
     }
 
     private fun testSpeed(mUrl: String) {
@@ -34,5 +36,17 @@ class NetworkSpeedTestingActivity : AppCompatActivity() {
             } catch (ex: Exception) {
                 ex.printStackTrace(); }
         }.execute()
+    }
+
+    private fun ping() {
+        val TAG = "PingTest"
+        Ping.start("google.com", 5, {
+            line -> LogUtils.d(TAG + "line", line)
+        }, {
+            result -> LogUtils.e(TAG, "Avg: ${result.avg} \nMin: ${result.min} \nMax: ${result.max}" +
+                "\nCount: ${result.count} \nDropped: ${result.dropped} \nInterval: ${result.interval}" +
+                "\nIp: ${result.ip} \nSent: ${result.sent} \nResult: ${result.result}" +
+                "\nCount: ${result.count} \nSide: ${result.size} \nStddev: ${result.stddev}")
+        })
     }
 }

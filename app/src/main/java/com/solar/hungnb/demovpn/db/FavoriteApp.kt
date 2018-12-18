@@ -1,4 +1,4 @@
-package com.solar.hungnb.demovpn.model
+package com.solar.hungnb.demovpn.db
 
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey

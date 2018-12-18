@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="10dp"
-    tools:context=".activity.MainActivity">
+    tools:context=".screen.MainActivity">
 
     <TextView
         android:id="@+id/tvTimeConnect"
@@ -64,6 +64,13 @@
         <Button
             android:id="@+id/btnTestNetworkSpeed"
             android:text="Test Internet Speed"
+            android:onClick="click"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/btnNetworkInfo"
+            android:text="Show network info"
             android:onClick="click"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />

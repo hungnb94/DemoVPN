@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".screen.NetworkInfoFragment">
+
+    <data>
+
+        <variable
+            name="wifiName"
+            type="String" />
+
+        <variable
+            name="ipAdress"
+            type="String" />
+
+        <variable
+            name="wifiState"
+            type="String" />
+
+        <variable
+            name="countryName"
+            type="String" />
+
+        <variable
+            name="macAddress"
+            type="String" />
+
+        <variable
+            name="phoneName"
+            type="String" />
+
+        <variable
+            name="phoneVersion"
+            type="String" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/tvWifiName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{wifiName}"
+            android:textSize="30sp" />
+
+        <TextView
+            android:id="@+id/tvIpAddress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{ipAdress}"
+            android:textSize="30sp" />
+
+        <TextView
+            android:id="@+id/tvWifiState"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{wifiState}"
+            android:textSize="30sp" />
+
+        <TextView
+            android:id="@+id/tvCountryName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{countryName}"
+            android:textSize="30sp" />
+
+        <TextView
+            android:id="@+id/tvMacAddress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{macAddress}"
+            android:textSize="30sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{phoneName}"
+            android:textSize="30sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{phoneVersion}"
+            android:textSize="30sp" />
+
+    </LinearLayout>
+
+</layout>

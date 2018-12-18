@@ -10,6 +10,7 @@ import de.blinkt.openvpn.core.ProfileManager
 import de.blinkt.openvpn.core.VPNLaunchHelper
 import java.io.IOException
 import java.io.StringReader
+import java.util.*
 
 
 object CommonUtils {
@@ -42,7 +43,7 @@ object CommonUtils {
     }
 
     @JvmStatic
-    fun startDefaultVpn(context: Context){
+    fun startDefaultVpn(context: Context) {
         val cp = ConfigParser()
         try {
             cp.parseConfig(StringReader(getConfig()))
@@ -275,5 +276,10 @@ object CommonUtils {
                 "## KwBz5haWDRNpHzT0ZUwmJhTUNn0gwMFytESBZDbP+1I1XZTja8NQngkpzVz09hBX\n" +
                 "## EAZZ5h4a1fg=\n" +
                 "## -----END CERTIFICATE-----\n"
+    }
+
+    fun getCountryName(countryCode: String): String {
+        val locale = Locale("", countryCode)
+        return locale.displayCountry
     }
 }

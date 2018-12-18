@@ -5,8 +5,8 @@ import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.os.AsyncTask
+import com.solar.hungnb.demovpn.db.FavoriteApp
 import com.solar.hungnb.demovpn.model.AppInfoWrapper
-import com.solar.hungnb.demovpn.model.FavoriteApp
 import com.solar.hungnb.demovpn.utils.MyDatabase
 import java.lang.ref.WeakReference
 
@@ -47,7 +47,8 @@ class LoadFavoriteAppTask(context: Context, private val listener: OnLoadAppListe
         val packages = pm.getInstalledApplications(PackageManager.GET_META_DATA)
         val installApps = ArrayList<ApplicationInfo>()
         installApps.addAll(packages.filter { applicationInfo ->
-            (!isSystemApp(applicationInfo) && isAppUsingInternet(applicationInfo, pm))
+            (!isSystemApp(applicationInfo) && isAppUsingInternet(applicationInfo, pm)
+                    && applicationInfo.packageName != context.packageName)
         })
 
         return installApps
