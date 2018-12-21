@@ -8,6 +8,7 @@ package de.blinkt.openvpn.core;
 import android.Manifest.permission;
 import android.annotation.TargetApi;
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.UiModeManager;
@@ -17,6 +18,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.VpnService;
 import android.os.Binder;
@@ -27,17 +29,15 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.ParcelFileDescriptor;
 import android.preference.PreferenceManager;
-
+import android.support.annotation.RequiresApi;
 import android.system.OsConstants;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
-
 import com.solar.hungnb.demovpn.R;
 import com.solar.hungnb.demovpn.screen.ServerActivity;
 import com.solar.hungnb.demovpn.utils.Constants;
-
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -48,7 +48,6 @@ import java.net.UnknownHostException;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.Vector;
-
 
 import de.blinkt.openvpn.VpnProfile;
 import de.blinkt.openvpn.core.VpnStatus.ByteCountListener;
@@ -154,7 +153,13 @@ public class OpenVPNService extends VpnService implements StateListener, Callbac
 
         //int icon = getIconByConnectionStatus(status);
         int icon = R.drawable.ic_app_notif;
-        android.app.Notification.Builder nbuilder = new Notification.Builder(this);
+        android.app.Notification.Builder nbuilder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            String channelId = createNotificationChannel("VPN Service", "Background Service");
+            nbuilder = new Notification.Builder(this, channelId);
+        } else {
+            nbuilder = new Notification.Builder(this);
+        }
 
         if (mProfile != null)
             nbuilder.setContentTitle(getString(R.string.notification_title, mProfile.mName));
@@ -203,6 +208,17 @@ public class OpenVPNService extends VpnService implements StateListener, Callbac
                     mlastToast.show();
                 }
             });
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private String createNotificationChannel(String channelId, String channelName) {
+        NotificationChannel channel = new NotificationChannel(channelId,
+                channelName, NotificationManager.IMPORTANCE_NONE);
+        channel.setLightColor(Color.BLUE);
+        channel.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
+        NotificationManager service = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        service.createNotificationChannel(channel);
+        return channelId;
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
